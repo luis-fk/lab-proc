@@ -94,6 +94,8 @@ unsigned __attribute__((naked)) getticks(void) {
  * Escolhe o próximo thread.
  */
 void schedule(void) {
+  /* map_section(0x0, 0x8000);
+  map_section(0x108000, 0x600000); */
   head = head->next;
   tid = head->tid;
   tcb = &head->tcb;

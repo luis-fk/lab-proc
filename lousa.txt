@@ -1,0 +1,56 @@
+MEMÓRIA FÍSICA
+
++----------------+        0x0            ^                                                                          ^
+|                |                       |                                                                          |
+|   .text        |                       |  1MB   ->   Corresponde à parte 0x8000-0x107FFF da memória virtual       |
+|                |                       |                                                                          |
++----------------+        0x100000       v                                                                          |
+| Processo 1     |                                                                                                  |
+| (.data, .bss,  |                                                                                                  |
+|  etc)          |                                                                                                  |
++----------------+        0x200000                                                                                  |
+| Processo 2     |                                                                                                  |
+| (.data, .bss,  |                                                                                                  |
+|  etc)          |                                                                                                  |
++----------------+                                                                                                  |       4GB -> 4K seções de 1MB
+| Processo 3     |                                                                                                  |
+| (.data, .bss,  |                                                                                                  |                                                                                                  |
+|  etc)          |                                                                                                  |
++----------------+                                                                                                  |
+        .                                                                                                           |
+        .                                                                                                           |
+        .                                                                                                           |
++----------------+   0x                                                                                             |
+| Processo n     |                                                                                                  |
+| (.data, .bss,  |                                                                                                  |
+|  etc)          |                                                                                                  |
++----------------+    0x100000000                                                                                   v
+
+MEMÓRIA VIRTUAL (o que cada processo enxerga)
+
++----------------+ 0x
+|                |
+|  .text         |
+|                |
++----------------+ 0x100000
+| (.data,.bss,   |
+|   etc)         |
+|                |
++----------------+ 0x200000
+
+MAPEAMENTO DE MEMÓRIA FÍSICA-VIRTUAL:
+
+Endereço que vou acessar (virtual): 0x001200F2
+Qual o índice? 0x001200F2 >> 20 = 0x001
+tabela[1] = ? -> 0x300000
+Qual o offest? 0x001200F2 & ^0xFFF00000 = 0x000200F2
+Endereço físico: 
+tabela[1] + offset = 0x300000 + 0x000200F2 = 0x0003200F2
+
+Exemplo: o que o professor fez no map flat?
+tabela[0x001] = 0x00100000
+tabela[0x002] = 0x200000
+tabela[0x003] = 0x300000
+...
+
+QUAL NOSSO PAPEL? Preecher o vetor tabela com descritores

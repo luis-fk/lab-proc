@@ -1,6 +1,8 @@
 
 SECTIONS {
-  .boot 0x8000 : {
+  . = 0;
+
+  .boot : {
      *(.boot)
    }
 
@@ -9,14 +11,15 @@ SECTIONS {
     *(.text)
   }
 
+  . = 0x100000;
+  
    . = ALIGN(8);
-  .rodata : {
-    *(.rodata)
-  }
+  .rodata : { *(.rodata) }
 
   . = ALIGN(8);
   data_begin = .;
   .data : { *(.data) }
+  data_end = .;
 
   . = ALIGN(8);
   bss_begin = .;
@@ -36,5 +39,7 @@ SECTIONS {
      stack_user2 = .;
      . = . + 4K;
      stack_user3 = .;
-   }
+  }
+
+  . = 0x200000;
 }
