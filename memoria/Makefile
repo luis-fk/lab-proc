@@ -28,18 +28,19 @@ OBJDMP = ${PREFIXO}objdump
 OBJ = $(FONTES:.s=.o)
 OBJETOS = $(OBJ:.c=.o)
 
+QEMU := env -u LD_LIBRARY_PATH /usr/bin/qemu-system-arm
 
 ifeq (${RPICPU}, bcm2836)
 	# Raspberry Pi v.2 ou v.3
 	ASMOPTIONS = -g --defsym RPICPU=2
 	COPTIONS = -march=armv7-a -mtune=cortex-a7 -g -D RPICPU=2
-	LDOPTS = -lgcc -L/usr/lib/gcc/arm-none-eabi/12.2.1/
+	LDOPTS = -lgcc -L/usr/lib/gcc/arm-none-eabi/13.2.1/
 else
 	ifeq (${RPICPU}, bcm2835)
   		# Raspberry Pi v.0 ou v.1
    	ASMOPTIONS = -march=armv6zk -g --defsym RPICPU=0
    	COPTIONS = -march=armv6zk -mtune=arm1176jzf-s -g -D RPICPU=0
-		LDOPTS = -lgcc -L/usr/lib/gcc/arm-none-eabi/12.2.1/
+		LDOPTS = -lgcc -L/usr/lib/gcc/arm-none-eabi/13.2.1/
 	endif
 endif
 
@@ -98,6 +99,15 @@ ocd:
 	else openocd -f ${OCD_CFG} & \
 	fi
 
+qemu: ${EXEC}
+	@# if there's already a qemu-system-arm running, skip
+	@if pgrep -x qemu-system-arm >/dev/null; then \
+	  echo "qemu já está executando"; \
+	else \
+	  echo "iniciando qemu…"; \
+	  $(QEMU) -s -M raspi2b & \
+	fi
+
 #
 # Gdb via serial
 #
@@ -110,6 +120,12 @@ gdb: ${EXEC}
 		                -ex "target remote ${TTY}" \
 	                   -ex "load"; \
 	fi
+
+gdbqemu: ${EXEC}
+	gdb-multiarch -ex "target extended-remote :1234" \
+					  -ex "set architecture arm" \
+					  -ex "load" \
+					  ${EXEC}
 
 #
 # Elimina os processos
