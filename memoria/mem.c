@@ -91,11 +91,8 @@ void map_invalid(uint32_t virt) {
 void mmu_flat(void) {
    int i;
    for(i=0; i<4096; i++) { // Iterar 4K vezes
-      map_section(i << 20 /* 0x100000 */, i << 20, 0x0000);
+      map_section(i << 20, i << 20, 0x0000);
    }
-   // i = 0: 0 0
-   // i = 0x100000, 0x100000
-   // i = 0x200000, 0x200000 
 }
 
 int main(void) {
