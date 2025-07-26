@@ -30,6 +30,7 @@ OBJETOS = $(OBJ:.c=.o)
 
 PATH_GCC = /usr/lib/gcc/arm-none-eabi/13.2.1/
 PATH_NEWLIB = /usr/lib/arm-none-eabi/lib/
+PATH_LIBMEM = ./libmem/
 
 QEMU := env -u LD_LIBRARY_PATH /usr/bin/qemu-system-arm
 
@@ -37,13 +38,13 @@ ifeq (${RPICPU}, bcm2836)
 	# Raspberry Pi v.2 ou v.3
 	ASMOPTIONS = -g --defsym RPICPU=2
 	COPTIONS = -march=armv7-a -mtune=cortex-a7 -g -D RPICPU=2
-	LDOPTS = -lgcc -L${PATH_GCC} -L${PATH_NEWLIB} -lc_nano
+	LDOPTS = -lgcc -L${PATH_GCC} -L${PATH_NEWLIB} -L${PATH_LIBMEM} -lc_nano -lmem
 else
 	ifeq (${RPICPU}, bcm2835)
   		# Raspberry Pi v.0 ou v.1
    	ASMOPTIONS = -march=armv6zk -g --defsym RPICPU=0
    	COPTIONS = -march=armv6zk -mtune=arm1176jzf-s -g -D RPICPU=0
-		LDOPTS = -lgcc -L${PATH_GCC} -L${PATH_NEWLIB} -lc_nano
+		LDOPTS = -lgcc -L${PATH_GCC} -L${PATH_NEWLIB} -L${PATH_LIBMEM} -lc_nano -lmem
 	endif
 endif
 
@@ -142,4 +143,4 @@ gdbqemu: ${EXEC}
 kill:
 	-killall openocd
 	-killall gdb-multiarch
-
+	-killall -9 qemu-system-arm

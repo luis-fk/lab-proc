@@ -1,0 +1,2 @@
+arm-none-eabi-gcc -o mem.o -march=armv7-a -mtune=cortex-a7 -g -lgcc -c -L/usr/lib/gcc/arm-none-eabi/13.2.1/ mem.c
+arm-none-eabi-ld -M=libmem.map mem.o -lgcc -L/usr/lib/gcc/arm-none-eabi/13.2.1/ -i -o libmem.a

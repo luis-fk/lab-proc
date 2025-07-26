@@ -1,8 +1,6 @@
 
 SECTIONS {
-  . = 0;
-
-  .boot : {
+  .boot 0x8000: {
      *(.boot)
    }
 
