@@ -133,4 +133,5 @@ gdbqemu: ${EXEC}
 kill:
 	-killall openocd
 	-killall gdb-multiarch
+	-killall -9 qemu-system-arm
 
