@@ -20,7 +20,7 @@ typedef struct {
 /**
  * TTB no endereço 0x4000 (fixo e alinhado em 16 kiB).
  */
-ttb_l1_t *ttb_l1 = (ttb_l1_t*)0xF4000; /*Como esse endereço é decidido?*/
+ttb_l1_t *ttb_l1 = (ttb_l1_t*)0x3EFFC000; /*Como esse endereço é decidido?*/
 
 /**
  * Desabilita o gerenciador de memória.
