@@ -91,6 +91,21 @@ irq:
  */
 .global task_switch
 task_switch:
-   restore_context            // retorna o contexto salvo em tcb
+   restore_context
+
+   push {r0, r2}
+   ldr r0, =0x3EFFC000
+
+   mvn r2, #0
+   bic r2, #0xC
+   mcr p15, 0, r2, c3, c0, 0
+   mcr p15, 0, r0, c2, c0, 0
+   mcr p15, 0, r0, c2, c0, 1
+   mrc p15, 0, r2, c1, c0, 0
+   orr r2, r2, #0x05
+   orr r2, r2, #0x1000
+   mcr p15, 0, r2, c1, c0, 0;
+   pop {r0, r2}
+
    movs pc, lr                // retorna e muda o modo, restaurando cpsr (flag S)
    

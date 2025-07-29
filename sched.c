@@ -1,8 +1,11 @@
 #include "sched.h"
 #include "bcm.h"
+#include "./libmem/mem.h"
 #include <stdint.h>
 
 #define MAX_TASKS 1024
+
+#define SECTION(X) __attribute__((section(X)))
 
 /*
  * Símbolos definidos pelo linker (stacks)
@@ -43,20 +46,20 @@ typedef struct tcb_ll {
  * Lista estática dos tasks definidos no sistema.
  */
 
-volatile tcb_ll_t tcb_list[MAX_TASKS];
-volatile tcb_ll_t *head = &tcb_list[0];
+SECTION(".tcb") volatile tcb_ll_t tcb_list[MAX_TASKS];
+SECTION(".tcb") volatile tcb_ll_t *head = &tcb_list[0];
 
 /*
  * Variáveis globais, acessadas em boot.s
  */
-volatile int tid;
-volatile tcb_t *tcb;
+SECTION(".tcb") volatile int tid;
+SECTION(".tcb") volatile tcb_t *tcb;
 
 /*
  * Variáveis globais de controle da lista de tasks
  */
-volatile int ll_size = 0;
-volatile int last_tid = 0;
+SECTION(".tcb") volatile int ll_size = 0;
+SECTION(".tcb") volatile int last_tid = 0;
 
 /**
  * Chama o kernel com swi, a função "yield" (r0 = 1).
@@ -94,11 +97,12 @@ unsigned __attribute__((naked)) getticks(void) {
  * Escolhe o próximo thread.
  */
 void schedule(void) {
-  /* map_section(0x0, 0x8000);
-  map_section(0x108000, 0x600000); */
+  mmu_stop();
   head = head->next;
   tid = head->tid;
   tcb = &head->tcb;
+  map_section((ttb_l1_t*)0x3EFFC000, 0x100000, 0x100000 * (tid + 1), 0x0);
+  tlb_invalida();
 }
 
 /**
@@ -226,10 +230,17 @@ void sched_init(void) {
 
   tcb_list[0].tcb = tcb1;
   tcb_list[0].tid = 0;
-  tcb_list[0].next = &tcb_list[0];
+  tcb_list[0].next = &tcb_list[1];
 
-  insert_tcb(&tcb_list[0], tcb2);
-  insert_tcb(tcb_list[0].next, tcb3);
+  tcb_list[1].tcb = tcb2;
+  tcb_list[1].tid = 1;
+  tcb_list[1].next = &tcb_list[2];
+
+  tcb_list[2].tcb = tcb3;
+  tcb_list[2].tid = 2;
+  tcb_list[2].next = &tcb_list[0];
+
+
 
   tid = 0;
   tcb = &head->tcb;
@@ -243,7 +254,7 @@ void sched_init(void) {
                        | __bit(5)  // habilita interrupção
                        | __bit(1); // timer de 23 bits
 
-  IRQ_REG(enable_basic) = __bit(0); // habilita interrupção básica 0 (timer)
+  // IRQ_REG(enable_basic) = __bit(0); // habilita interrupção básica 0 (timer)
 }
 
 /*
