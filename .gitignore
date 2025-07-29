@@ -5,3 +5,4 @@
 *.hex
 *.img
 *.o
+.vscode
