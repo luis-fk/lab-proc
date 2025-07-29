@@ -135,6 +135,12 @@ gdbqemu: ${EXEC}
 	gdb-multiarch -ex "target extended-remote :1234" \
 					  -ex "set architecture arm" \
 					  -ex "load" \
+					  -ex "b main.c:26" \
+					  -ex "b main.c:41" \
+					  -ex "b main.c:53" \
+					  -ex "b main.c:system_main" \
+					  -ex "b sched.c:103" \
+					  -ex "b switch.s:109" \
 					  ${EXEC}
 
 #

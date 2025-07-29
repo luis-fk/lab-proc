@@ -1,3 +1,6 @@
+.include "./libmem/mem.inc"
+
+.extern TTB_L1_ADDR /* Definido no arquivo mem.c, endereço da tabela de páginas */
 
 /**
  * Salva o contexto do processador na posição de memória
@@ -27,6 +30,18 @@
    ldmib r0, {r1-r14}^        // recupera valores dos registradores do usuário
    ldr lr, [r0, #60]          // recupera endereço de retorno
    ldr r0, [r0]               // recupera r0 original
+.endm
+
+.macro mmu_start
+   mvn r2, #0
+   bic r2, #0xC
+   mcr p15, 0, r2, c3, c0, 0
+   mcr p15, 0, r0, c2, c0, 0
+   mcr p15, 0, r0, c2, c0, 1
+   mrc p15, 0, r2, c1, c0, 0
+   orr r2, r2, #0x05
+   orr r2, r2, #0x1000
+   mcr p15, 0, r2, c1, c0, 0
 .endm
 
 .text
@@ -92,5 +107,25 @@ irq:
 .global task_switch
 task_switch:
    restore_context            // retorna o contexto salvo em tcb
-   movs pc, lr                // retorna e muda o modo, restaurando cpsr (flag S)
+   push {r0, r2}
+   ldr r0, =TTB_L1_ADDR
+
+   mvn r2, #0
+   bic r2, #0xC
+   mcr p15, 0, r2, c3, c0, 0
+   mcr p15, 0, r0, c2, c0, 0
+   mcr p15, 0, r0, c2, c0, 1
+   mrc p15, 0, r2, c1, c0, 0
+   orr r2, r2, #0x05
+   orr r2, r2, #0x1000
+   mcr p15, 0, r2, c1, c0, 0
+   
+   pop {r0, r2}
+   mov pc, lr                // retorna e muda o modo, restaurando cpsr (flag S)
+
+.global processes_entrypoint
+processes_entrypoint:
+   restore_context
+   movs pc, lr
+
    

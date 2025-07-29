@@ -7,18 +7,23 @@ extern void enable_irq(int);
  * Ponto de entrada do sistema.
  */
 void system_main(void) {
-  mmu_flat((ttb_l1_t*)0x3EFFC000); // Inicializa a MMU com uma tabela plana
+  mmu_stop();
+  mmu_flat();
+  mmu_start();
   sched_init();
-  asm volatile("b task_switch"); // transfere o controle ao primeiro thread
+  asm volatile("b processes_entrypoint"); // transfere o controle ao primeiro thread
 }
+
+int a = 23;
 
 /*
  * Ponto de entrada do primeiro task.
  */
 void user1_main(void) {
   int i;
+  a = 100;
   for (;;) {
-    for (i = 0; i < 100; i++) {
+    for (i = 0; i < a; i++) {
       asm volatile("nop");
     }
     asm volatile("nop");
@@ -31,8 +36,9 @@ void user1_main(void) {
  */
 void user2_main(void) {
   int i;
+  a = 200;
   for (;;) {
-    for (i = 0; i < 150; i++) {
+    for (i = 0; i < a; i++) {
       asm volatile("nop");
     }
     asm volatile("nop");
@@ -42,8 +48,9 @@ void user2_main(void) {
 
 void user3_main(void) {
   int i;
+  a = 300;
   for (;;) {
-    for (i = 0; i < 1500; i++) {
+    for (i = 0; i < a; i++) {
       asm volatile("nop");
     }
     asm volatile("nop");

@@ -1,8 +1,11 @@
 #include "sched.h"
 #include "bcm.h"
+#include "./libmem/mem.h"
 #include <stdint.h>
 
 #define MAX_TASKS 1024
+
+#define SECTION(X) __attribute__((section(X)))
 
 /*
  * Símbolos definidos pelo linker (stacks)
@@ -18,7 +21,7 @@ int user1_main(void);
 int user2_main(void);
 int user3_main(void);
 
-volatile uint32_t ticks; // contador de ticks
+SECTION(".sched") volatile uint32_t ticks; // contador de ticks
 
 /**
  * Estrutura do
@@ -43,20 +46,20 @@ typedef struct tcb_ll {
  * Lista estática dos tasks definidos no sistema.
  */
 
-volatile tcb_ll_t tcb_list[MAX_TASKS];
-volatile tcb_ll_t *head = &tcb_list[0];
+SECTION(".sched") volatile tcb_ll_t tcb_list[MAX_TASKS];
+SECTION(".sched") volatile tcb_ll_t *head = &tcb_list[0];
 
 /*
  * Variáveis globais, acessadas em boot.s
  */
-volatile int tid;
-volatile tcb_t *tcb;
+SECTION(".sched") volatile int tid;
+SECTION(".sched") volatile tcb_t *tcb;
 
 /*
  * Variáveis globais de controle da lista de tasks
  */
-volatile int ll_size = 0;
-volatile int last_tid = 0;
+SECTION(".sched") volatile int ll_size = 0;
+SECTION(".sched") volatile int last_tid = 0;
 
 /**
  * Chama o kernel com swi, a função "yield" (r0 = 1).
@@ -94,11 +97,12 @@ unsigned __attribute__((naked)) getticks(void) {
  * Escolhe o próximo thread.
  */
 void schedule(void) {
-  /* map_section(0x0, 0x8000);
-  map_section(0x108000, 0x600000); */
   head = head->next;
   tid = head->tid;
   tcb = &head->tcb;
+  mmu_stop();
+  map_section(0x100000, 0x100000 * (tid + 1), 0x0);
+  tlb_invalida();
 }
 
 /**

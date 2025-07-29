@@ -28,8 +28,6 @@ SECTIONS {
      . = ALIGN(8);
      heap_addr = .;
      . = . + 32K;
-     stack_sys = .;
-     . = . + 4K;
      stack_irq = .;
      . = . + 4K;
      stack_user1 = .;
@@ -40,4 +38,9 @@ SECTIONS {
   }
 
   . = 0x200000;
+
+  . = 0x500000;
+  .sched : { *(.sched) }
+  . = . + 4K;
+  stack_sys = .;
 }
