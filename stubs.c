@@ -21,7 +21,6 @@ int _close(int file) {
 }
 
 int _fstat(int file, struct stat *st) {
-  st->st_mode = S_IFCHR;
   return 0;
 }
 

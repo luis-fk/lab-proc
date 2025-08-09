@@ -1,5 +1,5 @@
 
-FONTES = boot.s switch.s sched.c main.c
+FONTES = boot.s switch.s sched.c main.c stubs.c
 RPICPU = bcm2836
 LDSCRIPT = linker.ld
 PROJETO = tasks
@@ -115,6 +115,18 @@ ocd:
 	else openocd -f ${OCD_CFG} & \
 	fi
 
+
+define BREAKS
+-ex "b system_main" \
+-ex "b main.c:28" \
+-ex "b main.c:35" \
+-ex "b main.c:47" \
+-ex "b main.c:53" \
+-ex "b main.c:63" \
+-ex "b main.c:70" \
+-ex "b sched.c:100"
+endef
+
 #
 # Gdb via serial
 #
@@ -123,25 +135,13 @@ gdb: ${EXEC}
 		gdb-multiarch ${EXEC} \
 			-ex "target extended-remote :3333" \
 			-ex "load" \
-			-ex "b main.c:23" \
-			-ex "b main.c:39" \
-			-ex "b main.c:51" \
-			-ex "b main.c:30" \
-			-ex "b main.c:45" \
-			-ex "b main.c:57" \
-			-ex "b schedule" \
+			${BREAKS} \
 			-ex "load"; \
 	else \
 		gdb-multiarch -b 115200 ${EXEC} \
 			-ex "target remote ${TTY}" \
 			-ex "load" \
-			-ex "b main.c:23" \
-			-ex "b main.c:39" \
-			-ex "b main.c:51" \
-			-ex "b main.c:30" \
-			-ex "b main.c:45" \
-			-ex "b main.c:57" \
-			-ex "b schedule" \
+			${BREAKS} \
 			-ex "load"; \
 	fi
 
@@ -152,12 +152,7 @@ gdbqemu: ${EXEC}
 	gdb-multiarch -ex "target extended-remote :1234" \
 					  -ex "set architecture arm" \
 					  -ex "load" \
-					  -ex "b system_main" \
-					  -ex "b main.c:27" \
-					  -ex "b main.c:42" \
-					  -ex "b main.c:54" \
-					  -ex "b sched.c:100" \
-					  -ex "load" \
+					  ${BREAKS} \
 					  -ex "load" \
 					  ${EXEC}
 
