@@ -30,11 +30,7 @@ SECTIONS {
      . = . + 32K;
      stack_irq = .;
      . = . + 4K;
-     stack_user1 = .;
-     . = . + 4K;
-     stack_user2 = .;
-     . = . + 4K;
-     stack_user3 = .;
+     stack_user = .;
   }
 
   . = 0x200000;

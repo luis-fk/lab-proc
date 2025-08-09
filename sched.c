@@ -10,9 +10,7 @@
 /*
  * Símbolos definidos pelo linker (stacks)
  */
-extern uint8_t stack_user1;
-extern uint8_t stack_user2;
-extern uint8_t stack_user3;
+extern uint8_t stack_user;
 
 /*
  * Pontos de entrada dos tasks (em main.c)
@@ -182,7 +180,7 @@ void sched_init(void) {
       0,
       0,
       0,                      // r0-r12
-      (uint32_t)&stack_user1, // sp
+      (uint32_t)&stack_user, // sp
       0,                      // lr inicial
       (uint32_t)user1_main,   // pc = lr = ponto de entrada
       0x10 // valor do cpsr (modo usuário, interrupções habilitadas)
@@ -202,7 +200,7 @@ void sched_init(void) {
       0,
       0,
       0,                      // r0-r12
-      (uint32_t)&stack_user2, // sp
+      (uint32_t)&stack_user, // sp
       0,                      // lr inicial
       (uint32_t)user2_main,   // pc = lr = ponto de entrada
       0x10 // valor do cpsr (modo usuário, interrupções habilitadas)
@@ -222,7 +220,7 @@ void sched_init(void) {
       0,
       0,
       0,                      // r0-r12
-      (uint32_t)&stack_user3, // sp
+      (uint32_t)&stack_user, // sp
       0,                      // lr inicial
       (uint32_t)user3_main,   // pc = lr = ponto de entrada
       0x10 // valor do cpsr (modo usuário, interrupções habilitadas)

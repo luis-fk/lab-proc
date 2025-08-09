@@ -15,8 +15,15 @@ void system_main(void) {
   asm volatile("b task_switch"); // transfere o controle ao primeiro thread
 }
 
+/* Função utilizatária de soma para ilustrar a pilha */
+int soma(int a, int b) {
+  yield();         // Desescalonando processo para ver funcionamento da pilha
+  return a + b;
+}
+
 int32_t a[ARRAY_SIZE];
 int32_t *b;
+
 
 /*
  * Ponto de entrada do primeiro task.
@@ -26,6 +33,7 @@ void user1_main(void) {
   int n = 5;
   b = malloc(n*sizeof(int32_t));
   for (;;) {
+    int c = soma(1, 1);
     for (i = 0; i < n; i++) {
       b[i] = 0xA1A1A1A1;
     }
@@ -45,6 +53,7 @@ void user2_main(void) {
   int n = 10;
   b = malloc(n*sizeof(int32_t));
   for (;;) {
+    int c = soma(1, 2);
     for (i = 0; i < n; i++) {
       b[i] = 0xB2B2B2B2;
     }
@@ -61,6 +70,7 @@ void user3_main(void) {
   int n = 100;
   b = malloc(n*sizeof(int32_t));
   for (;;) {
+    int c = soma(1, 3);
     for (i = 0; i < n; i++) {
       b[i] = 0xC3C3C3C3;
     }
