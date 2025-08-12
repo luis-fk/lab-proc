@@ -1,15 +1,13 @@
 #include <stdlib.h>
 #include <sys/stat.h>
+#include "sched.h"
 
-extern unsigned heap_addr;
+extern volatile tcb_t *tcb;
 
 void *_sbrk(int incr) {
-  static unsigned char *heap = NULL;
+  unsigned char *heap = tcb->sbreak;
   unsigned char *prev_heap;
 
-  if (heap == NULL) {
-    heap = (unsigned char *)&heap_addr;
-  }
   prev_heap = heap;
 
   heap += incr;

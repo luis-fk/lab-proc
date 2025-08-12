@@ -11,6 +11,8 @@
  * Símbolos definidos pelo linker (stacks)
  */
 extern uint8_t stack_user;
+extern uint8_t heap_addr;
+
 
 /*
  * Pontos de entrada dos tasks (em main.c)
@@ -20,25 +22,6 @@ int user2_main(void);
 int user3_main(void);
 
 volatile uint32_t ticks; // contador de ticks
-
-/**
- * Estrutura do
- * Task control block (TCB).
- */
-typedef struct tcb_s {
-  uint32_t regs[17]; // Contexto (r0-r15, cpsr)
-} tcb_t;
-
-/**
- *
- * Estrutura dados lista ligada de tasks
- *
- */
-typedef struct tcb_ll {
-  tcb_t tcb;
-  int tid;
-  volatile struct tcb_ll *next;
-} tcb_ll_t;
 
 /**
  * Lista estática dos tasks definidos no sistema.
@@ -183,7 +166,8 @@ void sched_init(void) {
       (uint32_t)&stack_user, // sp
       0,                      // lr inicial
       (uint32_t)user1_main,   // pc = lr = ponto de entrada
-      0x10 // valor do cpsr (modo usuário, interrupções habilitadas)
+      0x10, // valor do cpsr (modo usuário, interrupções habilitadas)
+      &heap_addr
   };
 
   tcb_t tcb2 = {
@@ -203,7 +187,8 @@ void sched_init(void) {
       (uint32_t)&stack_user, // sp
       0,                      // lr inicial
       (uint32_t)user2_main,   // pc = lr = ponto de entrada
-      0x10 // valor do cpsr (modo usuário, interrupções habilitadas)
+      0x10, // valor do cpsr (modo usuário, interrupções habilitadas)
+      &heap_addr
   };
 
   tcb_t tcb3 = {
@@ -223,7 +208,8 @@ void sched_init(void) {
       (uint32_t)&stack_user, // sp
       0,                      // lr inicial
       (uint32_t)user3_main,   // pc = lr = ponto de entrada
-      0x10 // valor do cpsr (modo usuário, interrupções habilitadas)
+      0x10, // valor do cpsr (modo usuário, interrupções habilitadas)
+      &heap_addr
   };
 
   tcb_list[0].tcb = tcb1;
