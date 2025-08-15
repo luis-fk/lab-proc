@@ -1,4 +1,3 @@
-
 SECTIONS {
   .boot 0x8000: {
      *(.boot)
@@ -28,7 +27,6 @@ SECTIONS {
      . = ALIGN(8);
      heap_addr = .;
      . = . + 32K;
-     stack_irq = .;
      . = . + 4K;
      stack_user = .;
   }
@@ -39,4 +37,8 @@ SECTIONS {
   .tcb : { *(.tcb) }
   . = . + 16K;
   stack_sys = .;
+  . = . + 16K;
+  stack_irq = .;
+
+  . = 0x700000;
 }
