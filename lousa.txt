@@ -2,7 +2,7 @@ MEMÓRIA FÍSICA
 
 +----------------+        0x0            ^                                                                          ^
 |                |                       |                                                                          |
-|   .text        |                       |  1MB   ->   Corresponde à parte 0x8000-0x107FFF da memória virtual       |
+|   .text        |                       |                                                                          |
 |                |                       |                                                                          |
 +----------------+        0x100000       v                                                                          |
 | Processo 1     |                                                                                                  |
@@ -26,17 +26,7 @@ MEMÓRIA FÍSICA
 |  etc)          |                                                                                                  |
 +----------------+    0x100000000                                                                                   v
 
-MEMÓRIA VIRTUAL (o que cada processo enxerga)
 
-+----------------+ 0x
-|                |
-|  .text         |
-|                |
-+----------------+ 0x100000
-| (.data,.bss,   |
-|   etc)         |
-|                |
-+----------------+ 0x200000
 
 MAPEAMENTO DE MEMÓRIA FÍSICA-VIRTUAL:
 

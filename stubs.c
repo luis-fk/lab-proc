@@ -5,7 +5,7 @@
 extern volatile tcb_t *tcb;
 
 void *_sbrk(int incr) {
-  unsigned char *heap = tcb->sbreak;
+  unsigned char *heap = tcb->heap;
   unsigned char *prev_heap;
 
   prev_heap = heap;

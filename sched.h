@@ -14,7 +14,7 @@ extern volatile tcb_t *tcb;
  */
 typedef struct tcb_s {
   uint32_t regs[17]; // Contexto (r0-r15, cpsr)
-  char *sbreak;
+  char *heap;
 } tcb_t;
 
 /**

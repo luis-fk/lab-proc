@@ -118,7 +118,6 @@ ocd:
 
 define BREAKS
 -ex "b system_main" \
--ex "b switch.s:94" \
 -ex "b main.c:36" \
 -ex "b main.c:43" \
 -ex "b main.c:56" \
@@ -126,7 +125,11 @@ define BREAKS
 -ex "b main.c:73" \
 -ex "b main.c:80" \
 -ex "b main.c:20" \
--ex "b sched.c:100"
+-ex "b switch.s:94" \
+-ex "b swi" \
+-ex "b schedule" \
+-ex "b yield" \
+-ex "b trata_swi"
 endef
 
 #
