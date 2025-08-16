@@ -118,13 +118,13 @@ ocd:
 
 define BREAKS
 -ex "b system_main" \
--ex "b main.c:36" \
--ex "b main.c:43" \
--ex "b main.c:56" \
--ex "b main.c:63" \
--ex "b main.c:73" \
--ex "b main.c:80" \
--ex "b main.c:20" \
+-ex "b main.c:42" \
+-ex "b main.c:58" \
+-ex "b main.c:65" \
+-ex "b main.c:78" \
+-ex "b main.c:85" \
+-ex "b main.c:95" \
+-ex "b main.c:102" \
 -ex "b switch.s:94" \
 -ex "b swi" \
 -ex "b schedule" \
